@@ -16,13 +16,13 @@ RUN pip install -U pip setuptools && pip install -r /tmp/requirements.txt
 
 RUN ldconfig && apt-get clean && apt-get autoremove
 
-ENV USER tf-docker
-
-ARG UID=9001
-ARG GID=9001
-RUN useradd -u $UID -o -m ${USER}
-RUN groupmod -g $GID -o ${USER}
-
+# make user
+ENV USER docker
+RUN useradd -m ${USER}
+RUN echo "${USER}:${USER}" | chpasswd
+RUN adduser ${USER} sudo	
+RUN echo "${USER} ALL=NOPASSWD:ALL" >> /etc/sudoers
 USER ${USER}
+
 WORKDIR /src
 
