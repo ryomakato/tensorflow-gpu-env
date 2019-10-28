@@ -16,13 +16,11 @@ RUN pip install -U pip setuptools && pip install -r /tmp/requirements.txt
 
 RUN ldconfig && apt-get clean && apt-get autoremove
 
-# make user
+# make user by entrypoint.sh
 ENV USER docker
-RUN useradd -m ${USER}
-RUN echo "${USER}:${USER}" | chpasswd
-RUN adduser ${USER} sudo	
-RUN echo "${USER} ALL=NOPASSWD:ALL" >> /etc/sudoers
-USER ${USER}
-
+RUN echo "${USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+RUN chmod u+s /usr/sbin/useradd && chmod u+s /usr/sbin/groupadd
+COPY entrypoint.sh /entrypoint.sh
 WORKDIR /src
-
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]
